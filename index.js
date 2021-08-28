@@ -220,35 +220,42 @@ let handleDragstart = e => {
 let handleDragover = e => {
     e.preventDefault()
     e.dataTransfer.dropEffect = "move"
+    todosContainer.style.setProperty('--display', 'block')
 
-    let dropPosition = e.target.closest('.todo')
-    if (dropPosition) dropPosition.style.setProperty('--display', 'block')
-    if (dropPosition) {
-        if (e.pageY - e.target.offsetTop < e.target.getBoundingClientRect().height / 2) {
-            dropPosition.style.setProperty('--inset', '0 0 100%')
+    let currentDragPosition
+    try {
+        currentDragPosition = e.target.closest('.todo')
+    } catch { }
+    if (currentDragPosition) {
+        let cursorPosition = e.pageY - todosContainer.offsetTop
+        let todoHeight = currentDragPosition.getBoundingClientRect().height
+
+        if (cursorPosition % todoHeight < todoHeight / 2) {
+            todosContainer.style.setProperty('--position', cursorPosition - (cursorPosition % todoHeight) + 'px')
         } else {
-            dropPosition.style.setProperty('--inset', 'calc(100% + 2px) 0 100%')
+            todosContainer.style.setProperty('--position', cursorPosition - (cursorPosition % todoHeight) + todoHeight + 'px')
         }
     }
 }
 let handleDrop = e => {
     e.preventDefault()
     let dropPosition = e.target.closest('.todo')
+    todosContainer.style.setProperty('--display', 'none')
 
     if (dropPosition) {
-        if (e.pageY - e.target.offsetTop < e.target.getBoundingClientRect().height / 2) {
+        if (e.pageY - todosContainer.offsetTop - e.target.closest('.todo').offsetTop < e.target.closest('.todo').getBoundingClientRect().height / 2) {
             todosContainer.insertBefore(draggingTodo, dropPosition)
-            dropPosition.style.setProperty('--inset', '0 0 100%')
-            dropPosition.style.setProperty('--display', 'none')
         } else {
             todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
-            dropPosition.style.setProperty('--inset', '100% 0 100%')
-            dropPosition.style.setProperty('--display', 'none')
 
         }
     } else if (e.target === todosContainer) {
         todosContainer.append(draggingTodo)
     }
+}
+
+let handleDragleave = () => {
+    todosContainer.style.setProperty('--display', 'none')
 }
 
 
@@ -260,9 +267,7 @@ todosContainer.addEventListener('drop', e => handleDrop(e))
 
 todosContainer.addEventListener('dragover', e => handleDragover(e))
 
-todosContainer.addEventListener('dragleave', e => {
-    if (e.target.closest('.todo')) e.target.closest('.todo').style.setProperty('--display', 'none')
-})
+todosContainer.addEventListener('dragleave', () => handleDragleave())
 
 
 

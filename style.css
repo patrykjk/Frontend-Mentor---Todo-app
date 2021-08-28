@@ -141,6 +141,21 @@ main {
     border-radius: .3em .3em 0 0;
     box-shadow: 0 9px 3px rgba(9, 9, 9, .16);
     min-height: 150px;
+    position: relative;
+    --display: none;
+    --position: 0;
+}
+.todos-container::after {
+    content: '';
+    position: absolute;
+    display: var(--display);
+    top: var(--position);
+    right: 0;
+    border: 0 solid transparent;
+    border-width: 7px 13px;
+    border-right-color: var(--bright-blue);
+    transform: translateY(-50%);
+    z-index: 1;
 }
 
 .todo {
@@ -151,20 +166,7 @@ main {
     font-size: 1.1rem;
     padding: 15px;
     border-bottom: 2px solid var(--very-light-gray);
-    position: relative;
-    --display: none;
-    --inset: 0 0 100%;
-}
-.todo::after {
-    content: '';
-    position: absolute;
-    display: var(--display);
-    inset: var(--inset);
-    border: 0 solid transparent;
-    border-width: 7px 13px;
-    border-right-color: var(--bright-blue);
-    transform: translateY(-50%);
-    z-index: 1;
+    height: 56px;
 }
 
 .todo p {
