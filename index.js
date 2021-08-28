@@ -210,6 +210,61 @@ document.addEventListener('click', e => {
     if (e.target.matches('.dark-theme-toggle')) toggleDarkTheme()
 })
 
+let draggingTodo
+
+let handleDragstart = e => {
+    e.dataTransfer.setData("text/html", e.target.outerHTML)
+    e.dataTransfer.effectAllowed = "move"
+    draggingTodo = e.target
+}
+let handleDragover = e => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+
+    let dropPosition = e.target.closest('.todo')
+    if (dropPosition) dropPosition.style.setProperty('--display', 'block')
+    if (dropPosition) {
+        if (e.pageY - e.target.offsetTop < e.target.getBoundingClientRect().height / 2) {
+            dropPosition.style.setProperty('--inset', '0 0 100%')
+        } else {
+            dropPosition.style.setProperty('--inset', 'calc(100% + 2px) 0 100%')
+        }
+    }
+}
+let handleDrop = e => {
+    e.preventDefault()
+    let dropPosition = e.target.closest('.todo')
+
+    if (dropPosition) {
+        if (e.pageY - e.target.offsetTop < e.target.getBoundingClientRect().height / 2) {
+            todosContainer.insertBefore(draggingTodo, dropPosition)
+            dropPosition.style.setProperty('--inset', '0 0 100%')
+            dropPosition.style.setProperty('--display', 'none')
+        } else {
+            todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
+            dropPosition.style.setProperty('--inset', '100% 0 100%')
+            dropPosition.style.setProperty('--display', 'none')
+
+        }
+    } else if (e.target === todosContainer) {
+        todosContainer.append(draggingTodo)
+    }
+}
+
+
+todosContainer.addEventListener('dragstart', e => {
+    if (e.target.matches('.todo')) handleDragstart(e)
+})
+
+todosContainer.addEventListener('drop', e => handleDrop(e))
+
+todosContainer.addEventListener('dragover', e => handleDragover(e))
+
+todosContainer.addEventListener('dragleave', e => {
+    if (e.target.closest('.todo')) e.target.closest('.todo').style.setProperty('--display', 'none')
+})
+
+
 
 
 
