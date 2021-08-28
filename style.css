@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+
+:root {
+    /* ### Primary */
+
+    --bright-blue: hsl(220, 98%, 61%);
+    --check-background: linear-gradient(to bottom right, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+
+    /* ### Neutral */
+
+    /* ### Light Theme */
+
+    --very-light-gray: hsl(0, 0%, 98%);
+    --very-light-grayish-blue: hsl(236, 33%, 92%);
+    --light-grayish-blue: hsl(233, 11%, 84%);
+    --dark-grayish-blue: hsl(236, 9%, 61%);
+    --very-dark-grayish-blue: hsl(235, 19%, 35%);
+
+    /* ###-dark Theme */
+
+    /* --very-dark-blue: hsl(235, 21%, 11%); */
+    /* --very-dark-desaturated-blue: hsl(235, 24%, 19%); */
+    /* --light-grayish-blue: hsl(234, 39%, 85%); */
+    /* --light-grayish-blue-hover: hsl(236, 33%, 92%); */
+    /* --dark-grayish-blue: hsl(234, 11%, 52%); */
+    /* --very-dark-grayish-blue: hsl(233, 14%, 35%); */
+    /* --very-dark-grayish-blue: hsl(237, 14%, 26%); */
+}
+
+*, ::before, ::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: .9rem;
+}
+
+body {
+    /* min-height: 100vh; */
+    background: url(images/bg-mobile-light.jpg) no-repeat;
+    background-size: 100vw 200px;
+    display: flex;
+    justify-content: center;
+}
+
+img {
+    display: block;
+}
+
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.circle {
+    border-radius: 50%;
+    border: 2px solid var(--light-grayish-blue);
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    appearance: none;
+    -webkit-appearance: none;
+    user-select: none;
+}
+.circle:checked {
+    background: url(images/icon-check.svg) no-repeat center center, var(--check-background) no-repeat;
+    /* border: none; */
+}
+.circle:hover:not(.circle:checked) {
+    border: 2px double transparent;
+    border-radius: 50%;
+    background-image: linear-gradient(white, white), var(--check-background);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+
+
+
+
+main {
+    width: 87%;
+    max-width: 550px;
+}
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 37px;
+}
+
+.logo {
+    font-size: 29px;
+    text-transform: uppercase;
+    color: var(--very-light-gray);
+    font-weight: 700;
+    letter-spacing: 10px;
+    user-select: none;
+}
+
+.dark-theme-toggle::after {
+    content: url(images/icon-moon.svg);
+    display: grid;
+    place-items: center;
+}
+
+
+.new-todo {
+    /* background: white; */
+    box-shadow: 0 0 10px 7px var(--very-light-gray);
+    margin-top: 30px;
+    border-radius: .3em;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.new-todo input[type="text"] {
+    border: none;
+    flex: 1;
+    outline: none;
+    font-size: 1.1rem;
+    background: none;
+    color: white;
+}
+.new-todo input::placeholder {
+    opacity: .4;
+}
+
+
+.todos-container {
+    margin-top: 15px;
+    background: white;
+    border-radius: .3em .3em 0 0;
+    box-shadow: 0 9px 3px rgba(9, 9, 9, .16);
+    min-height: 150px;
+}
+
+.todo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 1.1rem;
+    padding: 15px;
+    border-bottom: 2px solid var(--very-light-gray);
+}
+
+.todo p {
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+    transition: opacity 70ms;
+    cursor: pointer;
+}
+
+.todo.completed p {
+    opacity: .3;
+    text-decoration: line-through;
+}
+
+.todo-delete {
+    width: 20px;
+    transform: scale(1.6);
+}
+
+.todo-delete img {
+    transform: scale(.44);
+    pointer-events: none;
+}
+
+.no-todos-placeholder {
+    font-size: 2.7rem;
+    font-weight: 700;
+    opacity: .25;
+    height: 150px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    color: rgb(170, 170, 170);
+}
+
+
+.buttons {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    border-radius: 0 0 .3em .3em;
+    background: white;
+    color: var(--dark-grayish-blue)
+}
+.buttons::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: -2px;
+    height: 379%;
+    border-radius: 24%;
+    transform: translateY(37%);
+    /* background: radial-gradient(rgba(170, 170, 170, .33), rgba(200, 200, 200, .1)); */
+    background: radial-gradient(var(--very-light-grayish-blue), rgba(200, 200, 200, .1));
+    box-shadow: 0 0 29px 0 rgba(197, 197, 202, .4);
+    z-index: -1;
+}
+
+.buttons button {
+    color: inherit;
+}
+.buttons button:hover {
+    color: var(--very-dark-grayish-blue);
+}
+
+.filter-buttons-container {
+    position: absolute;
+    padding: 15px;
+    inset: 0;
+    transform: translateY(calc(100% + 15px));
+    border-radius: .3em;
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    background: white;
+}
+
+.filter-buttons-container button {
+    font-weight: 700;
+}
+
+.filter-buttons-container button.selected {
+    color: var(--bright-blue);
+}
+
+
+.tooltip {
+    text-align: center;
+    margin-top: 95px;
+    color: var(--dark-grayish-blue)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 633px) {
+    * {
+        font-size: 1rem;
+    }
+
+    body {
+        background: url(images/bg-desktop-light.jpg) no-repeat center top / 100vw 207px;
+    }
+
+    .new-todo,
+    .todo {
+        gap: 22px;
+    }
+
+    .todo-delete {
+        position: absolute;
+        opacity: 0;
+    }
+    .todo:hover .todo-delete,
+    .todo-delete:focus {
+        position: unset;
+        opacity: 1;
+    }
+
+    .buttons::after {
+        transform: translateY(9%);
+    }
+
+    .filter-buttons-container {
+        position: unset;
+        transform: none;
+        padding: 0;
+    }
+
+    .tooltip {
+        margin-top: 40px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.dark-theme {
+    background: url(images/bg-mobile-dark.jpg) no-repeat, var(--very-dark-blue);
+    background-size: 100vw 200px;
+    --very-dark-blue: hsl(235, 21%, 11%);
+    --very-dark-desaturated-blue: hsl(235, 24%, 19%);
+    --light-grayish-blue: hsl(234, 39%, 85%);
+    --light-grayish-blue-2: hsl(236, 33%, 92%);
+    --dark-grayish-blue: hsl(234, 11%, 52%);
+    --very-dark-grayish-blue: hsl(233, 14%, 35%);
+    --very-dark-grayish-blue-2: hsl(237, 14%, 26%);
+}
+
+.dark-theme .circle:not(.new-todo .circle) {
+    border-color: var(--very-dark-grayish-blue-2);
+}
+.dark-theme .circle:hover:not(.circle:checked) {
+    background-image: linear-gradient(var(--very-dark-desaturated-blue), var(--very-dark-desaturated-blue)), var(--check-background);
+    border: 2px double transparent;
+}
+
+.dark-theme .dark-theme-toggle::after {
+    content: url(images/icon-sun.svg);
+}
+
+
+.dark-theme .todos-container,
+.dark-theme .buttons,
+.dark-theme .filter-buttons-container {
+    background: var(--very-dark-desaturated-blue);
+}
+
+.dark-theme .new-todo input {
+    color: var(--light-grayish-blue);
+}
+
+.dark-theme .todo {
+    color: var(--light-grayish-blue);
+    border-color: var(--very-dark-grayish-blue-2);
+}
+
+.dark-theme .buttons {
+    color: var(--dark-grayish-blue);
+}
+
+.dark-theme .buttons::after {
+    background: radial-gradient(rgba(0, 0, 0, .39), rgba(0, 0, 0, .1));
+    box-shadow: 0 0 29px 0 rgba(0, 0, 0, .33);
+}
+
+.dark-theme .buttons button:hover {
+    color: var(--light-grayish-blue-2)
+}
+
+
+@media (min-width: 633px) {
+    .dark-theme {
+        background: url(images/bg-desktop-dark.jpg) no-repeat center top / 100vw 207px, var(--very-dark-blue);
+    }
+}
