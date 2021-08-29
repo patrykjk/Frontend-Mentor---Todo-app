@@ -126,14 +126,14 @@ main {
     box-shadow: 0 9px 3px rgba(9, 9, 9, .16);
     min-height: 150px;
     position: relative;
-    --display: none;
-    --position: 0;
+    --blue-arrow-display: none;
+    --blue-arrow-position: 0;
 }
 .todos-container::after {
     content: '';
     position: absolute;
-    display: var(--display);
-    top: var(--position);
+    display: var(--blue-arrow-display);
+    top: var(--blue-arrow-position);
     right: 0;
     border: 0 solid transparent;
     border-width: 7px 13px;

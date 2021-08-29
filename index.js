@@ -5,11 +5,13 @@ let selectAllButton = document.querySelector('.select-all')
 let NoTodosPlaceholder = document.querySelector('.no-todos-placeholder')
 let filterButtonsDiv = document.querySelector('.filter-buttons-container')
 let appliedFilter = 'all'
+let draggingTodo
+
 let todosArray = [
     {
         text: 'Read for 1 hour',
         id: 1,
-        completed: false
+        completed: true
     },
     {
         text: 'Pick up groceries',
@@ -25,20 +27,27 @@ let todosArray = [
 
 
 
-let saveAndDisplayTodo = userInput => {
-    if (!userInput) return
 
-    let id = Date.now()
 
+
+// ===============
+
+// FUNCTIONS
+
+// ===============
+
+
+let saveTodo = (text, id) => {
     let todo = {
-        text: userInput,
-        id: id,
+        text,
+        id,
         completed: false
     }
-
     todosArray.push(todo)
+}
 
 
+let displayTodo = (text, id, completed) => {
     let div = document.createElement('div')
     div.draggable = true
     div.setAttribute('data-id', id)
@@ -50,7 +59,7 @@ let saveAndDisplayTodo = userInput => {
     checkbox.classList.add('circle', 'todo-checkbox')
 
     let p = document.createElement('p')
-    p.innerText = userInput
+    p.innerText = text
 
     let deleteButton = document.createElement('button')
     deleteButton.classList.add('todo-delete')
@@ -59,23 +68,22 @@ let saveAndDisplayTodo = userInput => {
     deleteButtonIcon.src = 'images/icon-cross.svg'
     deleteButton.append(deleteButtonIcon)
 
+    if (completed) {
+        div.classList.add('completed')
+        checkbox.checked = true
+    }
+
     div.append(checkbox, p, deleteButton)
 
     todosContainer.append(div)
-
-    todoInput.value = ''
-    selectAllButton.checked = false
-    updateTodosCount()
-    updateNoTodosPlaceholder()
 }
+
 
 let deleteTodo = todoDiv => {
     todosArray = todosArray.filter(todo => todo.id != todoDiv.dataset.id)
     todoDiv.remove()
-
-    updateTodosCount()
-    updateNoTodosPlaceholder()
 }
+
 
 let clearCompletedTodos = () => {
     let completedTodoIds = todosArray.map(todo => {
@@ -87,10 +95,8 @@ let clearCompletedTodos = () => {
     })
 
     todosArray = todosArray.filter(todo => todo.completed == false)
-
-    updateTodosCount()
-    updateNoTodosPlaceholder()
 }
+
 
 let toggleCompletedState = todoDiv => {
     let selectedTodo = todosArray.find(todo => todo.id == todoDiv.dataset.id)
@@ -104,25 +110,8 @@ let toggleCompletedState = todoDiv => {
         todoDiv.classList.add('completed')
         todoDiv.querySelector('.todo-checkbox').checked = true
     }
-
-    selectAllButton.checked = false
-    filterTodos(filterButtonsDiv.querySelector('.selected').dataset.filter)
-    updateNoTodosPlaceholder()
 }
 
-let handleSelectAllButtonClick = e => {
-
-    let activeTodos = todosContainer.querySelectorAll('.todo:not(.completed)')
-
-    if (activeTodos.length) {
-        activeTodos.forEach(todo => toggleCompletedState(todo))
-        e.target.checked = true
-    } else {
-        todosContainer.querySelectorAll('.todo').forEach(todo => toggleCompletedState(todo))
-    }
-
-    updateNoTodosPlaceholder()
-}
 
 let filterTodos = filter => {
     let completedTodos = todosContainer.querySelectorAll('.completed')
@@ -142,10 +131,8 @@ let filterTodos = filter => {
         activeTodos.forEach(todo => todo.classList.remove('hidden'))
         completedTodos.forEach(todo => todo.classList.remove('hidden'))
     }
-
-    updateTodosCount()
-    updateNoTodosPlaceholder()
 }
+
 
 let updateTodosCount = () => {
     let activeTodosCount = todosArray.filter(todo => todo.completed == false).length
@@ -154,6 +141,7 @@ let updateTodosCount = () => {
     if (activeTodosCount == 1) todosCountDiv.innerText = 'One item left'
     if (activeTodosCount > 1) todosCountDiv.innerText = `${activeTodosCount} items left`
 }
+
 
 let updateNoTodosPlaceholder = () => {
     let anyTodo = todosContainer.querySelector('.todo:not(.hidden)')
@@ -171,70 +159,19 @@ let updateNoTodosPlaceholder = () => {
     }
 }
 
-let toggleDarkTheme = () => {
-    document.body.classList.toggle('dark-theme')
-}
 
-
-
-
-
-
-
-
-document.addEventListener('keydown', e => {
-    if (e.key != 'Enter') return
-
-    if (e.target.matches('#todo-input')) saveAndDisplayTodo(e.target.value.trim())
-
-    if (e.target.matches('.select-all')) handleSelectAllButtonClick(e)
-
-    if (e.target.matches('.todo-checkbox')) {
-        toggleCompletedState(e.target.closest('.todo'))
-        updateTodosCount()
-    }
-})
-
-document.addEventListener('click', e => {
-
-    if (e.target.matches('.todo-delete')) {
-        deleteTodo(e.target.closest('.todo'))
-        updateTodosCount()
+let updateBlueArrowDisplay = e => {
+    if (e.type == 'drop' || e.type == 'dragleave') {
+        todosContainer.style.setProperty('--blue-arrow-display', 'none')
+        return
     }
 
-    if (e.target.matches('.todo-checkbox') || e.target.matches('.todo p')) {
-        toggleCompletedState(e.target.closest('.todo'))
-        updateTodosCount()
-    }
-
-    if (e.target.matches('.select-all')) handleSelectAllButtonClick(e)
-
-    if (e.target.matches('.filter-buttons-container button')) {
-        appliedFilter = e.target.dataset.filter
-        filterTodos(appliedFilter)
-        filterButtonsDiv.querySelector('.selected').classList.remove('selected')
-        e.target.classList.add('selected')
-    }
-
-    if (e.target.matches('.clear-completed')) clearCompletedTodos()
-
-    if (e.target.matches('.dark-theme-toggle')) toggleDarkTheme()
-})
-
-let draggingTodo
-
-let handleDragstart = e => {
-    e.dataTransfer.setData("text/html", e.target.outerHTML)
-    e.dataTransfer.effectAllowed = "move"
-    draggingTodo = e.target
-}
-let handleDragover = e => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    todosContainer.style.setProperty('--display', 'block')
+    todosContainer.style.setProperty('--blue-arrow-display', 'block')
 
     let currentDragPosition
     try {
+        // added try because firefox was throwing an error
+        // when dragging over a text in a todo paragraph
         currentDragPosition = e.target.closest('.todo')
     } catch { }
     if (currentDragPosition) {
@@ -242,32 +179,183 @@ let handleDragover = e => {
         let todoHeight = currentDragPosition.getBoundingClientRect().height
 
         if (cursorPosition % todoHeight < todoHeight / 2) {
-            todosContainer.style.setProperty('--position', cursorPosition - (cursorPosition % todoHeight) + 'px')
+            let position = cursorPosition - (cursorPosition % todoHeight) + 'px'
+            todosContainer.style.setProperty('--blue-arrow-position', position)
         } else {
-            todosContainer.style.setProperty('--position', cursorPosition - (cursorPosition % todoHeight) + todoHeight + 'px')
+            let position = cursorPosition - (cursorPosition % todoHeight) + todoHeight + 'px'
+            todosContainer.style.setProperty('--blue-arrow-position', position)
         }
     }
 }
-let handleDrop = e => {
-    e.preventDefault()
+
+
+let appendDraggedDiv = e => {
     let dropPosition = e.target.closest('.todo')
-    todosContainer.style.setProperty('--display', 'none')
 
     if (dropPosition) {
+
         if (e.pageY - todosContainer.offsetTop - e.target.closest('.todo').offsetTop < e.target.closest('.todo').getBoundingClientRect().height / 2) {
             todosContainer.insertBefore(draggingTodo, dropPosition)
         } else {
             todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
-
         }
+
     } else if (e.target === todosContainer) {
         todosContainer.append(draggingTodo)
     }
 }
 
-let handleDragleave = () => {
-    todosContainer.style.setProperty('--display', 'none')
+
+
+
+
+
+
+
+
+
+// ======================
+
+// EVENT HANDLERS
+
+// ======================
+
+
+let handleTodoInputSubmit = e => {
+    let text = e.target.value.trim()
+    if (!text) return
+    let id = Date.now()
+
+    saveTodo(text, id)
+    displayTodo(text, id)
+    updateTodosCount()
+    updateNoTodosPlaceholder()
+
+    e.target.value = ''
+    selectAllButton.checked = false
 }
+
+
+let handleDeleteButtonClick = e => {
+    deleteTodo(e.target.closest('.todo'))
+    updateTodosCount()
+    updateNoTodosPlaceholder()
+}
+
+
+let handleClearCompletedButtonClick = () => {
+    clearCompletedTodos()
+    updateTodosCount()
+    updateNoTodosPlaceholder()
+}
+
+
+let handleTodoCheckboxClick = e => {
+    toggleCompletedState(e.target.closest('.todo'))
+    filterTodos(filterButtonsDiv.querySelector('.selected').dataset.filter)
+    updateTodosCount()
+    updateNoTodosPlaceholder()
+    selectAllButton.checked = false
+}
+
+
+let handleSelectAllButtonClick = e => {
+    let activeTodos = todosContainer.querySelectorAll('.todo:not(.completed)')
+
+    if (activeTodos.length) {
+        activeTodos.forEach(todo => toggleCompletedState(todo))
+        e.target.checked = true
+    } else {
+        todosContainer.querySelectorAll('.todo').forEach(todo => toggleCompletedState(todo))
+    }
+
+    filterTodos(appliedFilter)
+    updateTodosCount()
+    updateNoTodosPlaceholder()
+}
+
+
+let handleFilterButtonClick = e => {
+    appliedFilter = e.target.dataset.filter
+    filterTodos(appliedFilter)
+    updateNoTodosPlaceholder()
+
+    filterButtonsDiv.querySelector('.selected').classList.remove('selected')
+    e.target.classList.add('selected')
+}
+
+
+let handleDarkThemeButtonClick = () => {
+    document.body.classList.toggle('dark-theme')
+}
+
+
+let handleDragstart = e => {
+    e.dataTransfer.setData("text/html", e.target.outerHTML)
+    e.dataTransfer.effectAllowed = "move"
+    draggingTodo = e.target
+}
+
+
+let handleDragover = e => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    updateBlueArrowDisplay(e)
+}
+
+
+let handleDrop = e => {
+    e.preventDefault()
+    appendDraggedDiv(e)
+    updateBlueArrowDisplay(e)
+}
+
+
+let handleDragleave = e => {
+    updateBlueArrowDisplay(e)
+}
+
+
+
+
+
+
+
+
+
+
+// ========================
+
+// EVENT LISTENERS
+
+// ========================
+
+
+document.addEventListener('click', e => {
+    if (e.target.matches('.todo-delete')) handleDeleteButtonClick(e)
+
+    if (e.target.matches('.clear-completed')) handleClearCompletedButtonClick()
+
+    if (e.target.matches('.todo-checkbox') ||
+        e.target.matches('.todo p')) handleTodoCheckboxClick(e)
+
+    if (e.target.matches('.select-all')) handleSelectAllButtonClick(e)
+
+    if (e.target.matches('.filter-buttons-container button')) handleFilterButtonClick(e)
+
+    if (e.target.matches('.dark-theme-toggle')) handleDarkThemeButtonClick()
+})
+
+
+document.addEventListener('keydown', e => {
+    if (e.key != 'Enter') return
+
+    if (e.target.matches('#todo-input')) handleTodoInputSubmit(e)
+
+    if (e.target.matches('.select-all')) handleSelectAllButtonClick(e)
+
+    if (e.target.matches('.todo-checkbox')) handleTodoCheckboxClick(e)
+})
 
 
 todosContainer.addEventListener('dragstart', e => {
@@ -278,11 +366,21 @@ todosContainer.addEventListener('drop', e => handleDrop(e))
 
 todosContainer.addEventListener('dragover', e => handleDragover(e))
 
-todosContainer.addEventListener('dragleave', () => handleDragleave())
+todosContainer.addEventListener('dragleave', e => handleDragleave(e))
 
 
 
 
 
+
+
+// =======================
+
+// INITIAL RENDER
+
+// =======================
+
+
+todosArray.forEach(todo => displayTodo(todo.text, todo.id, todo.completed))
 updateTodosCount()
 updateNoTodosPlaceholder()
