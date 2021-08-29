@@ -5,7 +5,23 @@ let selectAllButton = document.querySelector('.select-all')
 let NoTodosPlaceholder = document.querySelector('.no-todos-placeholder')
 let filterButtonsDiv = document.querySelector('.filter-buttons-container')
 let appliedFilter = 'all'
-let todosArray = []
+let todosArray = [
+    {
+        text: 'Read for 1 hour',
+        id: 1,
+        completed: false
+    },
+    {
+        text: 'Pick up groceries',
+        id: 2,
+        completed: false
+    },
+    {
+        text: 'Complete Todo App on Frontend Mentor',
+        id: 3,
+        completed: false
+    },
+]
 
 
 
