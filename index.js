@@ -95,7 +95,6 @@ let toggleCompletedState = todoDiv => {
 }
 
 let handleSelectAllButtonClick = e => {
-    // if (!todosContainer.querySelector('.todo')) return
 
     let activeTodos = todosContainer.querySelectorAll('.todo:not(.completed)')
 
@@ -163,13 +162,9 @@ let toggleDarkTheme = () => {
 
 
 
-// todoInput.addEventListener('keydown', e => {
-//     if (e.key != 'Enter') return
 
-//     saveAndDisplayTodo(todoInput.value.trim())
 
-//     todoInput.value = ''
-// })
+
 
 document.addEventListener('keydown', e => {
     if (e.key != 'Enter') return

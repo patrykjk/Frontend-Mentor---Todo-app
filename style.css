@@ -15,16 +15,6 @@
     --light-grayish-blue: hsl(233, 11%, 84%);
     --dark-grayish-blue: hsl(236, 9%, 61%);
     --very-dark-grayish-blue: hsl(235, 19%, 35%);
-
-    /* ###-dark Theme */
-
-    /* --very-dark-blue: hsl(235, 21%, 11%); */
-    /* --very-dark-desaturated-blue: hsl(235, 24%, 19%); */
-    /* --light-grayish-blue: hsl(234, 39%, 85%); */
-    /* --light-grayish-blue-hover: hsl(236, 33%, 92%); */
-    /* --dark-grayish-blue: hsl(234, 11%, 52%); */
-    /* --very-dark-grayish-blue: hsl(233, 14%, 35%); */
-    /* --very-dark-grayish-blue: hsl(237, 14%, 26%); */
 }
 
 *, ::before, ::after {
@@ -36,7 +26,6 @@
 }
 
 body {
-    /* min-height: 100vh; */
     background: url(images/bg-mobile-light.jpg) no-repeat;
     background-size: 100vw 200px;
     display: flex;
@@ -69,11 +58,10 @@ button {
 }
 .circle:checked {
     background: url(images/icon-check.svg) no-repeat center center, var(--check-background) no-repeat;
-    /* border: none; */
+    border: none;
 }
 .circle:hover:not(.circle:checked) {
     border: 2px double transparent;
-    border-radius: 50%;
     background-image: linear-gradient(white, white), var(--check-background);
     background-origin: border-box;
     background-clip: content-box, border-box;
@@ -91,7 +79,6 @@ main {
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-top: 37px;
 }
 
@@ -112,23 +99,20 @@ main {
 
 
 .new-todo {
-    /* background: white; */
-    box-shadow: 0 0 10px 7px var(--very-light-gray);
+    background: white;
     margin-top: 30px;
     border-radius: .3em;
     padding: 15px;
     display: flex;
-    align-items: center;
     gap: 14px;
 }
 
 .new-todo input[type="text"] {
+    background: none;
     border: none;
     flex: 1;
     outline: none;
     font-size: 1.1rem;
-    background: none;
-    color: white;
 }
 .new-todo input::placeholder {
     opacity: .4;
@@ -164,9 +148,12 @@ main {
     align-items: center;
     gap: 14px;
     font-size: 1.1rem;
-    padding: 15px;
+    padding: 0 15px;
     border-bottom: 2px solid var(--very-light-gray);
     height: 56px;
+}
+.todo:nth-of-type(2) {
+    border-radius: .3em .3em 0 0;
 }
 
 .todo p {
@@ -177,6 +164,9 @@ main {
     user-select: none;
     transition: opacity 70ms;
     cursor: pointer;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .todo.completed p {
@@ -199,7 +189,7 @@ main {
     font-weight: 700;
     opacity: .25;
     height: 150px;
-    padding: 0 15px;
+    padding: 15px;
     display: flex;
     align-items: center;
     user-select: none;
@@ -214,7 +204,7 @@ main {
     position: relative;
     border-radius: 0 0 .3em .3em;
     background: white;
-    color: var(--dark-grayish-blue)
+    color: var(--dark-grayish-blue);
 }
 .buttons::after {
     content: '';
@@ -261,7 +251,7 @@ main {
 
 .tooltip {
     text-align: center;
-    margin-top: 95px;
+    margin: 95px 0 40px;
     color: var(--dark-grayish-blue)
 }
 
@@ -341,7 +331,7 @@ main {
     --very-dark-grayish-blue-2: hsl(237, 14%, 26%);
 }
 
-.dark-theme .circle:not(.new-todo .circle) {
+.dark-theme .circle {
     border-color: var(--very-dark-grayish-blue-2);
 }
 .dark-theme .circle:hover:not(.circle:checked) {
@@ -354,18 +344,22 @@ main {
 }
 
 
+.dark-theme .new-todo {
+    background: var(--very-dark-desaturated-blue);
+}
+.dark-theme .new-todo input {
+    color: var(--light-grayish-blue);
+}
+
 .dark-theme .todos-container,
+.dark-theme .todo,
 .dark-theme .buttons,
 .dark-theme .filter-buttons-container {
     background: var(--very-dark-desaturated-blue);
 }
 
-.dark-theme .new-todo input {
-    color: var(--light-grayish-blue);
-}
 
 .dark-theme .todo {
-    background: var(--very-dark-desaturated-blue);
     color: var(--light-grayish-blue);
     border-color: var(--very-dark-grayish-blue-2);
 }
