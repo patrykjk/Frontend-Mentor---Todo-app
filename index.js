@@ -128,8 +128,8 @@ let filterTodos = filter => {
     }
 
     if (filter == 'all') {
-        activeTodos.forEach(todo => todo.classList.remove('hidden'))
         completedTodos.forEach(todo => todo.classList.remove('hidden'))
+        activeTodos.forEach(todo => todo.classList.remove('hidden'))
     }
 }
 
@@ -160,48 +160,15 @@ let updateNoTodosPlaceholder = () => {
 }
 
 
-let updateBlueArrowDisplay = e => {
-    if (e.type == 'drop' || e.type == 'dragleave') {
-        todosContainer.style.setProperty('--blue-arrow-display', 'none')
-        return
-    }
-
-    todosContainer.style.setProperty('--blue-arrow-display', 'block')
-
-    let currentDragPosition
-    try {
-        // added try because firefox was throwing an error
-        // when dragging over a text in a todo paragraph
-        currentDragPosition = e.target.closest('.todo')
-    } catch { }
-    if (currentDragPosition) {
-        let cursorPosition = e.pageY - todosContainer.offsetTop
-        let todoHeight = currentDragPosition.getBoundingClientRect().height
-
-        if (cursorPosition % todoHeight < todoHeight / 2) {
-            let position = cursorPosition - (cursorPosition % todoHeight) + 'px'
-            todosContainer.style.setProperty('--blue-arrow-position', position)
-        } else {
-            let position = cursorPosition - (cursorPosition % todoHeight) + todoHeight + 'px'
-            todosContainer.style.setProperty('--blue-arrow-position', position)
-        }
-    }
-}
-
-
 let appendDraggedDiv = e => {
     let dropPosition = e.target.closest('.todo')
 
-    if (dropPosition) {
+    if (dropPosition === draggingTodo || !dropPosition) return
 
-        if (e.pageY - todosContainer.offsetTop - e.target.closest('.todo').offsetTop < e.target.closest('.todo').getBoundingClientRect().height / 2) {
-            todosContainer.insertBefore(draggingTodo, dropPosition)
-        } else {
-            todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
-        }
-
-    } else if (e.target === todosContainer) {
-        todosContainer.append(draggingTodo)
+    if (draggingTodo.offsetTop < dropPosition.offsetTop) {
+        todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
+    } else {
+        todosContainer.insertBefore(draggingTodo, dropPosition)
     }
 }
 
@@ -291,28 +258,12 @@ let handleDarkThemeButtonClick = () => {
 
 
 let handleDragstart = e => {
-    e.dataTransfer.setData("text/html", e.target.outerHTML)
-    e.dataTransfer.effectAllowed = "move"
     draggingTodo = e.target
 }
 
 
 let handleDragover = e => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    updateBlueArrowDisplay(e)
-}
-
-
-let handleDrop = e => {
-    e.preventDefault()
     appendDraggedDiv(e)
-    updateBlueArrowDisplay(e)
-}
-
-
-let handleDragleave = e => {
-    updateBlueArrowDisplay(e)
 }
 
 
@@ -358,15 +309,9 @@ document.addEventListener('keydown', e => {
 })
 
 
-todosContainer.addEventListener('dragstart', e => {
-    if (e.target.matches('.todo')) handleDragstart(e)
-})
-
-todosContainer.addEventListener('drop', e => handleDrop(e))
+todosContainer.addEventListener('dragstart', e => handleDragstart(e))
 
 todosContainer.addEventListener('dragover', e => handleDragover(e))
-
-todosContainer.addEventListener('dragleave', e => handleDragleave(e))
 
 
 

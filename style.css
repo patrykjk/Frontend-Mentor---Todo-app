@@ -125,21 +125,6 @@ main {
     border-radius: .3em .3em 0 0;
     box-shadow: 0 9px 3px rgba(9, 9, 9, .16);
     min-height: 150px;
-    position: relative;
-    --blue-arrow-display: none;
-    --blue-arrow-position: 0;
-}
-.todos-container::after {
-    content: '';
-    position: absolute;
-    display: var(--blue-arrow-display);
-    top: var(--blue-arrow-position);
-    right: 0;
-    border: 0 solid transparent;
-    border-width: 7px 13px;
-    border-right-color: var(--bright-blue);
-    transform: translateY(-50%);
-    z-index: 1;
 }
 
 .todo {
@@ -164,9 +149,7 @@ main {
     user-select: none;
     transition: opacity 70ms;
     cursor: pointer;
-    height: 100%;
-    display: flex;
-    align-items: center;
+    line-height: 56px;
 }
 
 .todo.completed p {
@@ -215,7 +198,6 @@ main {
     height: 379%;
     border-radius: 24%;
     transform: translateY(37%);
-    /* background: radial-gradient(rgba(170, 170, 170, .33), rgba(200, 200, 200, .1)); */
     background: radial-gradient(var(--very-light-grayish-blue), rgba(200, 200, 200, .1));
     box-shadow: 0 0 29px 0 rgba(197, 197, 202, .4);
     z-index: -1;
