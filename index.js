@@ -2,7 +2,7 @@ let todoInput = document.querySelector('#todo-input')
 let todosContainer = document.querySelector('.todos-container')
 let todosCountDiv = document.querySelector('.items-left')
 let selectAllButton = document.querySelector('.select-all')
-let NoTodosPlaceholder = document.querySelector('.no-todos-placeholder')
+let noTodosPlaceholder = document.querySelector('.no-todos-placeholder')
 let filterButtonsDiv = document.querySelector('.filter-buttons-container')
 let appliedFilter = 'all'
 let draggingTodo
@@ -152,10 +152,10 @@ let updateNoTodosPlaceholder = () => {
         if (appliedFilter == 'active') message = "No Active Todos"
         if (appliedFilter == 'completed') message = 'No Completed Todos'
 
-        NoTodosPlaceholder.innerHTML = message
-        NoTodosPlaceholder.classList.remove('hidden')
+        noTodosPlaceholder.innerHTML = message
+        noTodosPlaceholder.classList.remove('hidden')
     } else {
-        NoTodosPlaceholder.classList.add('hidden')
+        noTodosPlaceholder.classList.add('hidden')
     }
 }
 
