@@ -75,6 +75,17 @@ let displayTodo = (text, id, completed) => {
 
     div.append(checkbox, p, deleteButton)
 
+    let visibleTodosArray = todosContainer.querySelectorAll('.todo:not(.hidden)')
+    let lastTodo = visibleTodosArray[visibleTodosArray.length - 1]
+
+    if (lastTodo) {
+        let lastTodoOffset = parseInt(lastTodo.style.top)
+        let lastTodoHeight = lastTodo.offsetHeight
+        div.style.top = lastTodoOffset + lastTodoHeight + 'px'
+    } else {
+        div.style.top = 0
+    }
+
     todosContainer.append(div)
 }
 
@@ -87,7 +98,7 @@ let deleteTodo = todoDiv => {
 
 let clearCompletedTodos = () => {
     let completedTodoIds = todosArray.map(todo => {
-        if (todo.completed == true) return todo.id
+        if (todo.completed) return todo.id
     })
 
     completedTodoIds.forEach(id => {
@@ -162,14 +173,56 @@ let updateNoTodosPlaceholder = () => {
 
 let appendDraggedDiv = e => {
     let dropPosition = e.target.closest('.todo')
-
-    if (dropPosition === draggingTodo || !dropPosition) return
+    let currentDraggingTodoOffset = getComputedStyle(draggingTodo).top
 
     if (draggingTodo.offsetTop < dropPosition.offsetTop) {
         todosContainer.insertBefore(draggingTodo, dropPosition.nextSibling)
     } else {
         todosContainer.insertBefore(draggingTodo, dropPosition)
     }
+
+    draggingTodo.style.top = currentDraggingTodoOffset
+}
+
+
+let updateTodosPosition = () => {
+    let todos = todosContainer.querySelectorAll('.todo:not(.hidden)')
+    let prevTodo
+
+    todos.forEach(todo => {
+        if (prevTodo) {
+            let prevTodoOffset = parseInt(prevTodo.style.top)
+            let prevTodoHeight = prevTodo.offsetHeight
+
+            todo.style.top = prevTodoOffset + prevTodoHeight + 'px'
+
+            prevTodo = todo
+
+        } else {
+            let xd1 = noTodosPlaceholder.offsetTop
+            // without the above line there is no transition when dragging a todo to the very top
+            todo.style.top = 0
+
+            prevTodo = todo
+        }
+    })
+}
+
+
+let updateContainerHeight = () => {
+    let todos = todosContainer.querySelectorAll('.todo:not(.hidden)')
+    let height = 0
+
+    todos.forEach(todo => height += todo.offsetHeight)
+    todosContainer.style.height = height + 'px'
+}
+
+
+let toggleTransition = () => {
+    todosContainer.querySelectorAll('.todo').forEach(todo => {
+        todo.style.transition = 'unset'
+        setTimeout(() => todo.style.removeProperty('transition'), 24)
+    })
 }
 
 
@@ -195,6 +248,7 @@ let handleTodoInputSubmit = e => {
 
     saveTodo(text, id)
     displayTodo(text, id)
+    updateContainerHeight()
     updateTodosCount()
     updateNoTodosPlaceholder()
 
@@ -205,6 +259,8 @@ let handleTodoInputSubmit = e => {
 
 let handleDeleteButtonClick = e => {
     deleteTodo(e.target.closest('.todo'))
+    updateTodosPosition()
+    updateContainerHeight()
     updateTodosCount()
     updateNoTodosPlaceholder()
 }
@@ -212,6 +268,8 @@ let handleDeleteButtonClick = e => {
 
 let handleClearCompletedButtonClick = () => {
     clearCompletedTodos()
+    updateTodosPosition()
+    updateContainerHeight()
     updateTodosCount()
     updateNoTodosPlaceholder()
 }
@@ -220,6 +278,8 @@ let handleClearCompletedButtonClick = () => {
 let handleTodoCheckboxClick = e => {
     toggleCompletedState(e.target.closest('.todo'))
     filterTodos(filterButtonsDiv.querySelector('.selected').dataset.filter)
+    updateTodosPosition()
+    updateContainerHeight()
     updateTodosCount()
     updateNoTodosPlaceholder()
     selectAllButton.checked = false
@@ -237,6 +297,8 @@ let handleSelectAllButtonClick = e => {
     }
 
     filterTodos(appliedFilter)
+    updateTodosPosition()
+    updateContainerHeight()
     updateTodosCount()
     updateNoTodosPlaceholder()
 }
@@ -245,6 +307,9 @@ let handleSelectAllButtonClick = e => {
 let handleFilterButtonClick = e => {
     appliedFilter = e.target.dataset.filter
     filterTodos(appliedFilter)
+    toggleTransition()
+    updateTodosPosition()
+    updateContainerHeight()
     updateNoTodosPlaceholder()
 
     filterButtonsDiv.querySelector('.selected').classList.remove('selected')
@@ -258,12 +323,21 @@ let handleDarkThemeButtonClick = () => {
 
 
 let handleDragstart = e => {
-    draggingTodo = e.target
+    if (draggingTodo) draggingTodo.style.removeProperty('z-index')
+    draggingTodo = e.target.closest('.todo')
+    draggingTodo.style.zIndex = 1
 }
 
 
 let handleDragover = e => {
+    let target = e.target.closest('.todo')
+    if (!target || target.classList.contains('moving') || target == draggingTodo) return
+
     appendDraggedDiv(e)
+    updateTodosPosition()
+
+    target.classList.add('moving')
+    setTimeout(() => target.classList.remove('moving'), 321)
 }
 
 
@@ -327,5 +401,7 @@ todosContainer.addEventListener('dragover', e => handleDragover(e))
 
 
 todosArray.forEach(todo => displayTodo(todo.text, todo.id, todo.completed))
+updateTodosPosition()
+updateContainerHeight()
 updateTodosCount()
 updateNoTodosPlaceholder()

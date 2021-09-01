@@ -125,6 +125,10 @@ main {
     border-radius: .3em .3em 0 0;
     box-shadow: 0 9px 3px rgba(9, 9, 9, .16);
     min-height: 150px;
+    position: relative;
+    overflow: hidden;
+    transition: height 500ms;
+    user-select: none;
 }
 
 .todo {
@@ -136,6 +140,10 @@ main {
     padding: 0 15px;
     border-bottom: 2px solid var(--very-light-gray);
     height: 56px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    transition: top 321ms linear;
 }
 .todo:nth-of-type(2) {
     border-radius: .3em .3em 0 0;
